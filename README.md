@@ -25,7 +25,7 @@ import (
 	"fmt"
 	"testing"
 	. "github.com/webrtcn/s3client"
-	"github.com/webrtcn/s3client/models"
+	. "github.com/webrtcn/s3client/models"
 )
 
 func main {
