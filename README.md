@@ -14,6 +14,27 @@ Import it with:
 import "github.com/webrtcn/s3client"
 ```
 
+#### Support feature list
+
+Feature | Status | Remark
+---|---|---
+List Buckets |  √
+Delete Bucket|  √
+Create Bucket|  √
+Bucket ACLs (Get, Put) | √
+Bucket Location | √
+Bucket Object Versions | √
+Get Bucket Info (HEAD) |√
+Put Object|x|developing
+Delete Object|x|developing
+Get Object|x|developing
+Object ACLs (Get, Put)|x|developing
+Get Object Info (HEAD)|x|developing
+POST Object|x|developing
+Copy Object|x|developing
+Multipart Uploads|x|developing
+List Multipart Uploads|√
+
 ## Example
 
 
