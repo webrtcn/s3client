@@ -27,7 +27,7 @@ func TestCreate(t *testing.T) {
 }
 
 func TestDelete(t *testing.T) {
-	// client := NewClient("http://10.100.156.232:7480", "83YM37ECFMVEFPVHI367", "lP7MuvQ7zxloMrF0GKPiUZSv5nvuQ20XprtNmM2M")
+	// client := NewClient("http://example.com", "abc", "1234567")
 	// bucket := client.NewBucket()
 	// err := bucket.Remove("hello-world")
 	// if err != nil {
@@ -37,7 +37,7 @@ func TestDelete(t *testing.T) {
 
 func TestGet(t *testing.T) {
 	fmt.Println("test get")
-	// client := NewClient("http://10.100.156.232:7480", "83YM37ECFMVEFPVHI367", "lP7MuvQ7zxloMrF0GKPiUZSv5nvuQ20XprtNmM2M")
+	// client := NewClient("http://example.com", "abc", "1234567")
 	// bucket := client.NewBucket()
 	// value, err := bucket.Get("mdh-test2", "", "", "0", 1000)
 	// if err != nil {
@@ -48,7 +48,7 @@ func TestGet(t *testing.T) {
 }
 
 func TestGetLocation(t *testing.T) {
-	// client := NewClient("http://10.100.156.232:7480", "83YM37ECFMVEFPVHI367", "lP7MuvQ7zxloMrF0GKPiUZSv5nvuQ20XprtNmM2M")
+	// client := NewClient("http://example.com", "abc", "1234567")
 	// bucket := client.NewBucket()
 	// value, err := bucket.GetLocation("mdh-test2")
 	// if err != nil {
@@ -59,7 +59,7 @@ func TestGetLocation(t *testing.T) {
 }
 
 func TestGetACL(t *testing.T) {
-	// client := NewClient("http://10.100.156.232:7480", "83YM37ECFMVEFPVHI367", "lP7MuvQ7zxloMrF0GKPiUZSv5nvuQ20XprtNmM2M")
+	// client := NewClient("http://example.com", "abc", "1234567")
 	// bucket := client.NewBucket()
 	// err := bucket.GetACL("mdh-test2")
 	// if err != nil {
@@ -67,7 +67,7 @@ func TestGetACL(t *testing.T) {
 	// }
 }
 func TestSetACL(t *testing.T) {
-	// client := NewClient("http://10.100.156.232:7480", "83YM37ECFMVEFPVHI367", "lP7MuvQ7zxloMrF0GKPiUZSv5nvuQ20XprtNmM2M")
+	/// client := NewClient("http://example.com", "abc", "1234567")
 	// bucket := client.NewBucket()
 	// err := bucket.SetACL("mdh-test2", models.PublicReadWrite)
 	// if err != nil {
@@ -76,7 +76,7 @@ func TestSetACL(t *testing.T) {
 }
 
 func TestListUploads(t *testing.T) {
-	// client := NewClient("http://10.100.156.232:7480", "83YM37ECFMVEFPVHI367", "lP7MuvQ7zxloMrF0GKPiUZSv5nvuQ20XprtNmM2M")
+	// client := NewClient("http://example.com", "abc", "1234567")
 	// bucket := client.NewBucket()
 	// v, err := bucket.ListUploads("mdh-test2", "", "", "", "", 1000, 10)
 	// if err != nil {
@@ -87,10 +87,10 @@ func TestListUploads(t *testing.T) {
 }
 
 func TestSetVersioning(t *testing.T) {
-	client := NewClient("http://10.100.156.232:7480", "83YM37ECFMVEFPVHI367", "lP7MuvQ7zxloMrF0GKPiUZSv5nvuQ20XprtNmM2M")
-	bucket := client.NewBucket()
-	err := bucket.SetVersioning("mdh-test2", true)
-	if err != nil {
-		t.Error(err.Error())
-	}
+	// client := NewClient("http://example.com", "abc", "1234567")
+	// bucket := client.NewBucket()
+	// err := bucket.SetVersioning("mdh-test2", true)
+	// if err != nil {
+	// 	t.Error(err.Error())
+	// }
 }
