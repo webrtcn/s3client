@@ -1,4 +1,4 @@
-# go-s3-client 
+# go-ceph-s3-client 
 
 ## Installation
 
