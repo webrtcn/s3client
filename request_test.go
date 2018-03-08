@@ -1,6 +1,6 @@
 package s3client
 
-import (  
+import (   
 	"net/http"
 	"testing"
 )
@@ -29,7 +29,12 @@ func TestGetCanonicalizedResource(t *testing.T) {
 	req = &request {
 		bucket: "bucket",
 		object: "",
-		suffix: "acl",
+		suffixs: []suffix {
+			suffix {
+				key: "acl",
+				flag: true,
+			},
+		},
 	}
 	path = req.getCanonicalizedResource()
 	if (path != "/bucket?acl") {
@@ -38,7 +43,12 @@ func TestGetCanonicalizedResource(t *testing.T) {
 	req = &request {
 		bucket: "bucket",
 		object: "test.txt",
-		suffix: "uploads",
+		suffixs: []suffix {
+			suffix {
+				key: "uploads",
+				flag: true,
+			},
+		},
 	}
 	path = req.getCanonicalizedResource()
 	if (path != "/bucket/test.txt?uploads") {
@@ -47,11 +57,60 @@ func TestGetCanonicalizedResource(t *testing.T) {
 	req = &request {
 		bucket: "bucket",
 		object: "this/is/a/test.txt",
-		suffix: "partNumber=1&uploadId=2~0_EI37ycVV1zh-KAjDZgn15VtyoM7KK",
+		suffixs: []suffix {
+			suffix {
+				key: "partNumber",
+				value: "1",
+				flag: false,
+			},
+			suffix {
+				key: "uploadId",
+				value: "2~0_EI37ycVV1zh-KAjDZgn15VtyoM7KK",
+				flag: false,
+			},
+		}, 
 	}
-	path = req.getCanonicalizedResource()
+	path = req.getCanonicalizedResource() 
 	if (path != "/bucket/this/is/a/test.txt?partNumber=1&uploadId=2~0_EI37ycVV1zh-KAjDZgn15VtyoM7KK") {
 		t.Error("/bucket/this/is/a/test.txt?partNumber=1&uploadId=2~0_EI37ycVV1zh-KAjDZgn15VtyoM7KK path error")
+	}
+
+	suffixs := []suffix {
+		suffix {
+			key: "max-keys",
+			value: "1000",
+			flag: false,
+		},
+		suffix {
+			key: "marker",
+			value: "1",
+			flag: false,
+		},
+		suffix {
+			key: "delimiter",
+			value: "/",
+			flag: false,
+		},
+		suffix {
+			key: "prefix",
+			value: "0",
+			flag: false,
+		},
+	} 
+	req = &request {
+		bucket: "bucket",
+		object: "test.txt",
+		suffixs: suffixs,
+	}
+
+	path = req.getCanonicalizedResource()
+	if (path != "/bucket/test.txt") {
+		t.Error("suffixs test error") 
+	}
+
+	path = req.getQueryString()
+	if (path != "/bucket/test.txt?max-keys=1000&marker=1&delimiter=/&prefix=0") {
+		t.Error("suffixs query error") 
 	}
 }
 

@@ -1,7 +1,7 @@
 package s3client
 
 import( 
-	"fmt"
+	"fmt" 
 	"errors"
 	"net/http"
 	"net/url"
@@ -17,6 +17,7 @@ type client struct {
 	secretAccessKey string
 }
 
+//NewClient init client 
 func NewClient(endPoint, accessKey, secretAccessKey string) *client {
 	return &client {
 		endPoint: endPoint,
@@ -25,6 +26,7 @@ func NewClient(endPoint, accessKey, secretAccessKey string) *client {
 	}
 }
 
+//NewBucket new bucket service
 func (c *client) NewBucket() *bucket {
 	return &bucket {
 		client: c,
@@ -33,11 +35,11 @@ func (c *client) NewBucket() *bucket {
 
 func (c *client) do(req *request, entity interface{}) error {
 	httpClient := &http.Client {}
-	reqURL, err := url.Parse(c.endPoint + req.getCanonicalizedResource())
+	reqURL, err := url.Parse(c.endPoint + req.getQueryString())
 	if err != nil {
 		return err
 	} 
-	sign := req.sign(c.accessKey, c.secretAccessKey)  
+	sign := req.sign(c.accessKey, c.secretAccessKey)
 	reqHeaders := http.Header {  
 		"Authorization": { sign },
 		"Host": { reqURL.Host }, 
@@ -67,7 +69,7 @@ func (c *client) do(req *request, entity interface{}) error {
 	body, err := ioutil.ReadAll(resp.Body)
 	fmt.Println("######################")
 	fmt.Println(string(body))
-	fmt.Println("######################") 
+	fmt.Println("######################")  
 	switch resp.StatusCode {
 	case 200: 
 		if len(body) > 0 {
