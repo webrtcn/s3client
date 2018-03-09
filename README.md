@@ -25,14 +25,14 @@ Bucket ACLs (Get, Put) | √
 Bucket Location | √
 Bucket Object Versions | √
 Get Bucket Info (HEAD) |√
-Put Object|x|developing
-Delete Object|x|developing
-Get Object|x|developing
-Object ACLs (Get, Put)|x|developing
-Get Object Info (HEAD)|x|developing
-POST Object|x|developing
-Copy Object|x|developing
-Multipart Uploads|x|developing
+Put Object|√|
+Delete Object|√|
+Get Object|√|
+Object ACLs (Get, Put)|√|
+Get Object Info (HEAD)|√|
+POST Object|√|
+Copy Object|√|
+Multipart Uploads|√|
 List Multipart Uploads|√
 
 ## Example
