@@ -7,7 +7,7 @@ import (
 )
 
 func TestList(t *testing.T) {
-	// client := NewClient("http://example.com", "abc", "1234567")
+	// client := NewClient("http://example.com", "accessKey", "secretAccesskey")
 	// bucket := client.NewBucket()
 	// values, err := bucket.List()
 	// if err != nil {

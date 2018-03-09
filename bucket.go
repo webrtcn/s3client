@@ -12,22 +12,31 @@ import (
 	"github.com/webrtcn/s3client/models"
 )
 
-type bucket struct {
-	client *client
+//Bucket Bucket
+type Bucket struct {
+	client *Client
+}
+
+//NewObject create object service
+func (b *Bucket) NewObject(bucketName string) *Object {
+	return &Object{
+		client:     b.client,
+		bucketName: bucketName,
+	}
 }
 
 //List all buckets
-func (b *bucket) List() (*models.BucketsResult, error) {
+func (b *Bucket) List() (*models.BucketsResult, error) {
 	req := &request{
 		method: get,
 	}
 	buckets := &models.BucketsResult{}
-	err := b.client.do(req, buckets)
+	err := b.client.do(req, buckets, nil)
 	return buckets, err
 }
 
 //Create bucket with given name
-func (b *bucket) Create(name string, perm models.ACL) error {
+func (b *Bucket) Create(name string, perm models.ACL) error {
 	req := &request{
 		method: put,
 		bucket: name,
@@ -35,17 +44,17 @@ func (b *bucket) Create(name string, perm models.ACL) error {
 			"x-amz-acl": {string(perm)},
 		},
 	}
-	err := b.client.do(req, nil)
+	err := b.client.do(req, nil, nil)
 	return err
 }
 
 //Remove bucket with given name
-func (b *bucket) Remove(name string) error {
+func (b *Bucket) Remove(name string) error {
 	req := &request{
 		method: delete,
 		bucket: name,
 	}
-	err := b.client.do(req, nil)
+	err := b.client.do(req, nil, nil)
 	return err
 }
 
@@ -56,7 +65,7 @@ func (b *bucket) Remove(name string) error {
 		marker:	 	A beginning index for the list of objects returned.
 		maxKeys:	The maximum number of keys to return. Default is 1000.
 */
-func (b *bucket) Get(name, prefix, delimiter, marker string, maxKeys int) (*models.GetBucketResponse, error) {
+func (b *Bucket) Get(name, prefix, delimiter, marker string, maxKeys int) (*models.GetBucketResponse, error) {
 	suffixs := []suffix{
 		suffix{
 			key:   "max-keys",
@@ -85,12 +94,12 @@ func (b *bucket) Get(name, prefix, delimiter, marker string, maxKeys int) (*mode
 		suffixs: suffixs,
 	}
 	resp := &models.GetBucketResponse{}
-	err := b.client.do(req, resp)
+	err := b.client.do(req, resp, nil)
 	return resp, err
 }
 
 //GetLocation get location of the bucket with given name
-func (b *bucket) GetLocation(name string) (string, error) {
+func (b *Bucket) GetLocation(name string) (string, error) {
 	suffixs := []suffix{
 		suffix{
 			key:  "location",
@@ -103,12 +112,12 @@ func (b *bucket) GetLocation(name string) (string, error) {
 		suffixs: suffixs,
 	}
 	value := &models.LocationConstraint{}
-	err := b.client.do(req, value)
+	err := b.client.do(req, value, nil)
 	return value.LocationConstraint, err
 }
 
 //GetACL get bucket acl
-func (b *bucket) GetACL(name string) (*models.AccessControlPolicy, error) {
+func (b *Bucket) GetACL(name string) (*models.AccessControlPolicy, error) {
 	suffixs := []suffix{
 		suffix{
 			key:  "acl",
@@ -121,12 +130,12 @@ func (b *bucket) GetACL(name string) (*models.AccessControlPolicy, error) {
 		suffixs: suffixs,
 	}
 	value := &models.AccessControlPolicy{}
-	err := b.client.do(req, value)
+	err := b.client.do(req, value, nil)
 	return value, err
 }
 
 //SetACL set bucket acl
-func (b *bucket) SetACL(name string, perm models.ACL) error {
+func (b *Bucket) SetACL(name string, perm models.ACL) error {
 	suffixs := []suffix{
 		suffix{
 			key:  "acl",
@@ -141,7 +150,7 @@ func (b *bucket) SetACL(name string, perm models.ACL) error {
 			"x-amz-acl": {string(perm)},
 		},
 	}
-	err := b.client.do(req, nil)
+	err := b.client.do(req, nil, nil)
 	return err
 }
 
@@ -155,7 +164,7 @@ func (b *bucket) SetACL(name string, perm models.ACL) error {
 	maxKeys The maximum number of in-progress uploads. The default is 1000.
 	maxUploads The maximum number of multipart uploads. The range from 1-1000. The default is 1000.
 */
-func (b *bucket) ListUploads(name, prefix, delimiter, keyMarker, uploadIDMarker string, maxKeys, maxUploads int) (*models.ListMultipartUploadsResult, error) {
+func (b *Bucket) ListUploads(name, prefix, delimiter, keyMarker, uploadIDMarker string, maxKeys, maxUploads int) (*models.ListMultipartUploadsResult, error) {
 	suffixs := []suffix{
 		suffix{
 			key:  "uploads",
@@ -198,12 +207,12 @@ func (b *bucket) ListUploads(name, prefix, delimiter, keyMarker, uploadIDMarker 
 		suffixs: suffixs,
 	}
 	value := &models.ListMultipartUploadsResult{}
-	err := b.client.do(req, value)
+	err := b.client.do(req, value, nil)
 	return value, err
 }
 
 //SetVersioning set bucket version enabled.
-func (b *bucket) SetVersioning(name string, enable bool) error {
+func (b *Bucket) SetVersioning(name string, enable bool) error {
 	status := models.VersioningSuspended
 	if enable {
 		status = models.VersioningEnabled
@@ -229,6 +238,6 @@ func (b *bucket) SetVersioning(name string, enable bool) error {
 			"Content-Length": {contentLength},
 		},
 	}
-	err := b.client.do(req, nil)
+	err := b.client.do(req, nil, nil)
 	return err
 }
