@@ -35,6 +35,11 @@ Copy Object|√|
 Multipart Uploads|√|
 List Multipart Uploads|√
 
+
+How to pre-signed
+
+ https://www.bennadel.com/blog/2693-uploading-files-to-amazon-s3-using-pre-signed-query-string-authentication-urls.htm
+
 ## Example
 
 

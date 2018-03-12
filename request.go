@@ -199,11 +199,16 @@ func (req *request) stringToSign() string {
 	return signString
 }
 
-func (req *request) sign(accessKey, secretAccessKey string) string {
+func (req *request) signature(accessKey, secretAccessKey string) string {
 	hash := hmac.New(sha1.New, []byte(secretAccessKey))
 	signString := req.stringToSign()
 	hash.Write([]byte(signString))
 	signature := make([]byte, base64.StdEncoding.EncodedLen(hash.Size()))
 	base64.StdEncoding.Encode(signature, hash.Sum(nil))
-	return fmt.Sprintf("AWS %s:%s", accessKey, string(signature))
+	return string(signature)
+}
+
+func (req *request) sign(accessKey, secretAccessKey string) string {
+	signature := req.signature(accessKey, secretAccessKey)
+	return fmt.Sprintf("AWS %s:%s", accessKey, signature)
 }
