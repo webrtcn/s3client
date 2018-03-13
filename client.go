@@ -69,21 +69,15 @@ func (c *Client) do(req *request, entity interface{}, bodyFunc func(resp *http.R
 	}
 	if bodyFunc != nil {
 		bodyFunc(resp)
-		b, _ := ioutil.ReadAll(resp.Body)
-		fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
-		fmt.Println(string(b))
-		fmt.Println("@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@")
 	} else {
 		defer resp.Body.Close()
-		// if entity == nil {
-		// 	return nil
-		// }
-		fmt.Println(resp.Header)
-		fmt.Println(resp.StatusCode)
+		if entity == nil {
+			return nil
+		}
 		body, err := ioutil.ReadAll(resp.Body)
-		fmt.Println("######################")
-		fmt.Println(string(body))
-		fmt.Println("######################")
+		if err != nil {
+			return err
+		}
 		switch resp.StatusCode {
 		case 200:
 			if len(body) > 0 {
