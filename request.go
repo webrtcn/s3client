@@ -195,8 +195,7 @@ func (req *request) stringToSign() string {
 	headers := req.getCanonicalizedAmzHeaders()
 	resource := req.getCanonicalizedResource()
 	verb := string(req.method)
-	signString := fmt.Sprintf("%s\n%s\n%s\n%s\n%s%s", verb, md5, ct, date, headers, resource)
-	return signString
+	return fmt.Sprintf("%s\n%s\n%s\n%s\n%s%s", verb, md5, ct, date, headers, resource)
 }
 
 func (req *request) signature(accessKey, secretAccessKey string) string {

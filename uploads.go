@@ -149,7 +149,6 @@ func (u *Uploads) Complete(uploadID string, completeParts CompleteParts) (*model
 		Parts: completeParts,
 	}
 	data, _ := xml.Marshal(result)
-	fmt.Println(string(data))
 	body := ioutil.NopCloser(bytes.NewReader(data))
 	contentLength := int64(len(data))
 	req := &request{
