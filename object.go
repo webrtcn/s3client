@@ -36,8 +36,8 @@ type GetObjectOption struct {
 
 //Range The range of the object to retrieve.
 type Range struct {
-	Begin int
-	End   int
+	Begin int64
+	End   int64
 }
 
 //CopyObjectOption Copy Object Option
@@ -50,17 +50,36 @@ type CopyObjectOption struct {
 }
 
 //Create upload object to bucket
-func (o *Object) Create(name, contentMd5, contentType string, contentLength int64, body io.ReadCloser, perm models.ACL) (err error) {
+func (o *Object) Create(name, contentMd5, contentType string, contentLength int64, body io.ReadCloser, perm models.ACL, option *GetObjectOption) (err error) {
+	header := http.Header{
+		"x-amz-acl":      {string(perm)},
+		"Content-Length": {strconv.FormatInt(contentLength, 10)},
+		"Content-MD5":    {contentMd5},
+		"Content-Type":   {contentType},
+	}
+	if option != nil {
+		if option.Range != nil {
+			value := fmt.Sprintf("bytes=%d-%d", option.Range.Begin, option.Range.End)
+			header.Add("Range", value)
+		}
+		if len(option.IfModifiedSince) > 0 {
+			header.Add("If-Modified-Since", option.IfModifiedSince)
+		}
+		if len(option.IfUnmodifiedSince) > 0 {
+			header.Add("If-Unmodified-Since", option.IfUnmodifiedSince)
+		}
+		if len(option.IfMatchTag) > 0 {
+			header.Add("If-Match", option.IfMatchTag)
+		}
+		if len(option.IfNotMatchTag) > 0 {
+			header.Add("If-None-Match", option.IfNotMatchTag)
+		}
+	}
 	req := &request{
-		method: put,
-		bucket: o.bucketName,
-		object: name,
-		headers: http.Header{
-			"x-amz-acl":      {string(perm)},
-			"Content-Length": {strconv.FormatInt(contentLength, 10)},
-			"Content-MD5":    {contentMd5},
-			"Content-Type":   {contentType},
-		},
+		method:   put,
+		bucket:   o.bucketName,
+		object:   name,
+		headers:  header,
 		playload: body,
 	}
 	err = o.client.do(req, nil, nil)
