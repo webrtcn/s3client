@@ -36,67 +36,61 @@ func (c *Client) NewBucket() *Bucket {
 }
 
 func (c *Client) do(req *request, entity interface{}, bodyFunc func(resp *http.Response)) error {
-	httpClient := &http.Client{}
+	httpClient := http.DefaultClient
 	reqURL, err := url.Parse(c.endPoint + req.getQueryString())
 	if err != nil {
 		return err
 	}
 	sign := req.sign(c.accessKey, c.secretAccessKey)
-	reqHeaders := http.Header{
-		"Authorization": {sign},
-		"Host":          {reqURL.Host},
-	}
+	request, err := http.NewRequest(string(req.method), reqURL.String(), req.playload)
+	request.Header.Set("Authorization", sign)
+	request.Header.Set("Host", request.Host)
 	for k, v := range req.headers {
-		reqHeaders.Add(k, v[0])
-	}
-	fmt.Println(reqHeaders)
-	httpRequest := &http.Request{
-		URL:    reqURL,
-		Method: string(req.method),
-		Header: reqHeaders,
+		request.Header.Set(k, v[0])
 	}
 	if v, ok := req.headers["Content-Length"]; ok {
-		httpRequest.ContentLength, _ = strconv.ParseInt(v[0], 10, 64)
-		if httpRequest.ContentLength == 0 {
-			req.playload = nil
-		} else {
-			httpRequest.Body = req.playload
-		}
+		request.ContentLength, _ = strconv.ParseInt(v[0], 10, 64)
 	}
-	resp, err := httpClient.Do(httpRequest)
+	fmt.Println(request.Header)
+	resp, err := httpClient.Do(request)
 	if err != nil {
 		return err
 	}
-	if bodyFunc != nil {
-		bodyFunc(resp)
-	} else {
-		defer resp.Body.Close()
-		if entity == nil {
-			return nil
-		}
-		body, err := ioutil.ReadAll(resp.Body)
-		if err != nil {
-			return err
-		}
-		switch resp.StatusCode {
-		case 200:
+	switch resp.StatusCode {
+	case 200, 206:
+		if bodyFunc != nil {
+			bodyFunc(resp)
+		} else {
+			if entity == nil {
+				return nil
+			}
+			defer resp.Body.Close()
+			body, err := ioutil.ReadAll(resp.Body)
+			if err != nil {
+				return err
+			}
 			if len(body) > 0 {
 				err := xml.Unmarshal(body, entity)
 				if err != nil {
 					return err
 				}
 			}
-		case 400, 403, 404, 405, 408, 409, 411, 412, 416, 422, 500:
-			if len(body) > 0 {
-				er := &models.ErrorResult{}
-				err = xml.Unmarshal(body, er)
-				if err != nil {
-					return err
-				}
-				return errors.New(er.Code)
-			}
-			return fmt.Errorf("Request error, status code: %s", strconv.Itoa(resp.StatusCode))
 		}
+	case 400, 403, 404, 405, 408, 409, 411, 412, 416, 422, 500:
+		defer resp.Body.Close()
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			return err
+		}
+		if len(body) > 0 {
+			er := &models.ErrorResult{}
+			err = xml.Unmarshal(body, er)
+			if err != nil {
+				return err
+			}
+			return errors.New(er.Code)
+		}
+		return fmt.Errorf("Request error, status code: %s", strconv.Itoa(resp.StatusCode))
 	}
 	return nil
 }
