@@ -1,23 +1,41 @@
 package s3client
 
 import (
+	"bufio"
 	"crypto/md5"
 	"encoding/base64"
+	"fmt"
+	"io"
+	"os"
 	"testing"
+	"time"
+
+	"github.com/webrtcn/s3client/models"
 )
 
 func TestCreateObject(t *testing.T) {
-	// client := NewClient("http://example.com", "accessKey", "secretAccesskey")
-	// bucket := client.NewBucket()
-	// object := bucket.NewObject("mdh-test2")
-	// data := []byte("<root>hello root</root>")
-	// md5 := md5Content(data)
-	// length := int64(len(data))
-	// body := ioutil.NopCloser(bytes.NewReader(data))
-	// err := object.Create("lyl.txt", md5, "text/xml", length, body, models.PublicReadWrite)
-	// if err != nil {
-	// 	t.Error(err.Error())
-	// }
+	filename := "/Users/ring/Downloads/QQ7.6.exe"
+	client := NewClient("http://example.com", "accessKey", "secretAccesskey")
+	bucket := client.NewBucket()
+	object := bucket.NewObject("mdh-test2")
+	md5, _ := hash(filename)
+	f, err := os.Open(filename)
+	if err != nil {
+		fmt.Println(err)
+	}
+	defer f.Close()
+	fi, _ := f.Stat()
+	length := fi.Size()
+	defer timeCost(time.Now(), "TestCreateObject")
+	err = object.Create("qq.exe", md5, "application/octet-stream", length, f, models.PublicReadWrite)
+	if err != nil {
+		t.Error(err.Error())
+	}
+}
+
+func timeCost(start time.Time, method string) {
+	terminal := time.Since(start)
+	fmt.Println(method, " 耗时: ", terminal)
 }
 
 func md5Content(data []byte) string {
@@ -26,6 +44,24 @@ func md5Content(data []byte) string {
 	cipherStr := md5Ctx.Sum(nil)
 	value := base64.StdEncoding.EncodeToString(cipherStr)
 	return value
+}
+
+func hash(filename string) (md5String string, err error) {
+	defer timeCost(time.Now(), "Hash")
+	fi, err := os.Open(filename)
+	if err != nil {
+		return
+	}
+	defer fi.Close()
+	reader := bufio.NewReader(fi)
+	md5Ctx := md5.New()
+	_, err = io.Copy(md5Ctx, reader)
+	if err != nil {
+		return
+	}
+	cipherStr := md5Ctx.Sum(nil)
+	value := base64.StdEncoding.EncodeToString(cipherStr)
+	return value, nil
 }
 
 func TestGetObject(t *testing.T) {

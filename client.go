@@ -51,7 +51,6 @@ func (c *Client) do(req *request, entity interface{}, bodyFunc func(resp *http.R
 	if v, ok := req.headers["Content-Length"]; ok {
 		request.ContentLength, _ = strconv.ParseInt(v[0], 10, 64)
 	}
-	fmt.Println(request.Header)
 	resp, err := httpClient.Do(request)
 	if err != nil {
 		return err
