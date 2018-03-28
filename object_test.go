@@ -14,7 +14,7 @@ import (
 )
 
 func TestCreateObject(t *testing.T) {
-	filename := "/Users/ring/Downloads/QQ7.6.exe"
+	filename := "/Users/rain/Downloads/3.jpg"
 	client := NewClient("http://example.com", "accessKey", "secretAccesskey")
 	bucket := client.NewBucket()
 	object := bucket.NewObject("mdh-test2")
@@ -27,10 +27,12 @@ func TestCreateObject(t *testing.T) {
 	fi, _ := f.Stat()
 	length := fi.Size()
 	defer timeCost(time.Now(), "TestCreateObject")
-	err = object.Create("qq.exe", md5, "application/octet-stream", length, f, models.PublicReadWrite)
+	err = object.Create("/3.jpg", md5, "application/octet-stream", length, f, models.PublicReadWrite)
 	if err != nil {
 		t.Error(err.Error())
+		return
 	}
+	fmt.Println("create object successful.")
 }
 
 func timeCost(start time.Time, method string) {

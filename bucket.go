@@ -65,7 +65,7 @@ func (b *Bucket) Remove(name string) error {
 		marker:	 	A beginning index for the list of objects returned.
 		maxKeys:	The maximum number of keys to return. Default is 1000.
 */
-func (b *Bucket) Get(name, prefix, delimiter, marker string, maxKeys int) (*models.GetBucketResponse, error) {
+func (b *Bucket) Get(bucketName, prefix, delimiter, marker string, maxKeys int) (*models.GetBucketResponse, error) {
 	suffixs := []suffix{
 		suffix{
 			key:   "max-keys",
@@ -90,7 +90,7 @@ func (b *Bucket) Get(name, prefix, delimiter, marker string, maxKeys int) (*mode
 	}
 	req := &request{
 		method:  get,
-		bucket:  name,
+		bucket:  bucketName,
 		suffixs: suffixs,
 	}
 	resp := &models.GetBucketResponse{}

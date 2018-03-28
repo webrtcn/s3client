@@ -16,7 +16,7 @@ type Object struct {
 }
 
 //NewUploads Initiated multipart uploads
-func (o *Object) NewUploads(objName string, option *CreateUploadsOption) *Uploads {
+func (o *Object) NewUploads(objName string) *Uploads {
 	uploader := &Uploads{
 		client:     o.client,
 		bucketName: o.bucketName,
@@ -64,7 +64,6 @@ func (o *Object) Create(name, contentMd5, contentType string, contentLength int6
 		headers:  header,
 		playload: body,
 	}
-	fmt.Println(req.headers)
 	err = o.client.do(req, nil, nil)
 	return
 }
@@ -80,8 +79,6 @@ func (o *Object) Get(name string, option *GetObjectOption) (*http.Response, erro
 			} else {
 				value = fmt.Sprintf("bytes=%d-%d", option.Range.Begin, option.Range.End)
 			}
-			//header.Add("Accept-Ranges", "bytes")
-			//header.Add("Content-Range", value)
 			header.Add("Range", value)
 		}
 		if len(option.IfModifiedSince) > 0 {
@@ -103,9 +100,6 @@ func (o *Object) Get(name string, option *GetObjectOption) (*http.Response, erro
 		object:  name,
 		headers: header,
 	}
-	fmt.Println("************************")
-	fmt.Println(req.headers)
-	fmt.Println("************************")
 	var response *http.Response
 	err := o.client.do(req, nil, func(e *http.Response) {
 		response = e
