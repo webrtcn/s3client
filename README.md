@@ -55,12 +55,12 @@ import (
 )
 
 func main {
-    //list all buckets
+    	//list all buckets
 	client := NewClient("http://example.com", "accessKey", "secretAccessKey")
 	bucket := client.NewBucket()
 	values, err := bucket.List()
 	if err != nil {
-	 	t.Error(err.Error())
+	 	fmt.Println(err)
 	 } else {
 	 	fmt.Println(values.Owner.OwnerID)
 	 }
